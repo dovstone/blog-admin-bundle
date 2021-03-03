@@ -1,1 +1,97 @@
+parameters:
+    #env(resolve:APP_PREFIX): 'clic-emballage'
+    env(resolve:APP_PREFIX): '%env(APP_PREFIX)%'
 
+services:
+    _defaults:
+        autowire: true     
+        autoconfigure: true
+        public: false      
+
+    #
+    DovStone\Bundle\BlogAdminBundle\:
+        resource: '@DovStoneBlogAdminBundle/*'
+
+    _service.session:
+        class: DovStone\Bundle\BlogAdminBundle\Service\SessionService
+    _service.please:
+        class: DovStone\Bundle\BlogAdminBundle\Service\PleaseService
+    _service.nav:
+        class: DovStone\Bundle\BlogAdminBundle\Service\NavService
+    _service.post:
+        class: DovStone\Bundle\BlogAdminBundle\Service\PostService
+    _service.page:
+        class: DovStone\Bundle\BlogAdminBundle\Service\PageService
+    _service.article:
+        class: DovStone\Bundle\BlogAdminBundle\Service\ArticleService
+    _service.section:
+        class: DovStone\Bundle\BlogAdminBundle\Service\SectionService
+    _service.dir:
+        class: DovStone\Bundle\BlogAdminBundle\Service\DirService
+    _service.media:
+        class: DovStone\Bundle\BlogAdminBundle\Service\MediaService
+    _service.time:
+        class: DovStone\Bundle\BlogAdminBundle\Service\TimeService
+    _service.string:
+        class: DovStone\Bundle\BlogAdminBundle\Service\StringService
+    _service.url:
+        class: DovStone\Bundle\BlogAdminBundle\Service\UrlService
+    _service.env:
+        class: DovStone\Bundle\BlogAdminBundle\Service\EnvService
+    _service.execute_before:
+        class: DovStone\Bundle\BlogAdminBundle\Service\ExecuteBeforeService
+    _service.widget:
+        class: DovStone\Bundle\BlogAdminBundle\Service\WidgetBaseService
+    _service.widget_friendly_website_templates:
+        class: DovStone\Bundle\BlogAdminBundle\Service\WidgetFriendlyWebsiteTemplatesBuilderService
+    _service.wfwt:
+        class: DovStone\Bundle\BlogAdminBundle\Service\WidgetFriendlyWebsiteTemplatesBuilderService
+    _service.view:
+        class: DovStone\Bundle\BlogAdminBundle\Service\ViewService
+    _service.form_builder:
+        class: DovStone\Bundle\BlogAdminBundle\Service\FormBuilderService
+    _service.mix:
+        class: DovStone\Bundle\BlogAdminBundle\Service\MixService
+    _service.data:
+        class: DovStone\Bundle\BlogAdminBundle\Service\DataService
+    _service.minifier:
+        class: DovStone\Bundle\BlogAdminBundle\Service\__PhpHtmlCssJsMinifierService
+    _service.acf:
+        class: DovStone\Bundle\BlogAdminBundle\Service\ACFService
+    _service.shortcode:
+        class: DovStone\Bundle\BlogAdminBundle\Service\ShortcodeService
+    _service.qb:
+        class: DovStone\Bundle\BlogAdminBundle\Service\QueryBuilderService
+    _service.query_builder:
+        class: DovStone\Bundle\BlogAdminBundle\Service\QueryBuilderService
+
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User:
+            algorithm: bcrypt
+            cost: 12
+    providers:
+        #in_memory:
+        #    memory:
+        #        users:
+        #            stOne:
+        #                password: $2y$12$9nS7NzBiSnvcll0hqDNpcOX3JwxsXHdclLscLHYYyoQVIu361ROTS
+        #                roles: 'ROLE_ADMIN'
+        blog_admin_provider:
+            entity:
+                class: DovStone\Bundle\BlogAdminBundle\Entity\User
+                property: username
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: ~
+            #http_basic: ~
+            provider: blog_admin_provider
+    #access_control:
+    #  - { path: ^/dltentreprise/_admin, roles: ROLE_ADMIN }
+       
+twig:
+    paths:
+        '%kernel.project_dir%/vendor/dovstone/blog-admin-bundle/src/Resources/views': DovStoneBlogAdminBundle
