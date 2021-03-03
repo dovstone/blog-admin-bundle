@@ -1,0 +1,45 @@
+{% extends '@DovStoneBlogAdminBundle/base.html.twig' %}
+
+{% block body %}
+
+    <section class="section-base-body">
+
+        {% include '@DovStoneBlogAdminBundle/admin/profile-header.html.twig' %}
+
+        <div class="container settings">
+            <div class="row">
+                <div class="col-xs-12 col-md-9 col-md-offset-1">
+                    <a href="" class="cell-container">
+                        <div class="cell cell-7">
+                            <i class="fa fa-lock"></i>
+                        </div>
+                        <div class="cell cell-label">
+                            <p>Mot de passe</p>
+                            <span>Modifier votre mot de passe actuel</span>
+                        </div>
+                    </a>
+                    <a href="" class="cell-container">
+                        <div class="cell cell-7">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div class="cell cell-label">
+                            <p>Informations</p>
+                            <span>Modifier vos informations personnelles (Nom, prénoms, email...)</span>
+                        </div>
+                    </a>
+                    <a href="javascript:;" onclick="$('#thumbnail_upload').trigger('click')" class="cell-container">
+                        <div class="cell cell-7">
+                            <i class="fa fa-file-picture-o"></i>
+                        </div>
+                        <div class="cell cell-label">
+                            <p>Photo</p>
+                            <span>Modifier votre photo de profil</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}

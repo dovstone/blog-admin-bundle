@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html data-app-config='{{ getAppConfig() }}'>
+    <head>
+        <meta charset="UTF-8">
+        <title>Authentification | {{ getEnv('APP_NAME') }} | BACKOFFICE</title>
+        <link rel="stylesheet" href="{{ getCDN('swagg/css/imports.css') }}">
+        <script src="{{ getCDN('jquery/jquery-1.11.3.min.js') }}"></script>
+        <script>
+            $(function () {window.__ = {}; __.appDir = '{{ getAppDir() }}';})
+        </script>
+        <script src="{{ getCDN('underscore/js/underscore.js') }}"></script>
+        <script src="{{ getCDN('swagg/js/helpers.js') }}"></script>
+        <script src="{{ getCDN('swagg/js/admin.js') }}"></script>
+    </head>
+
+    <body>
+        <style type="text/css">
+
+            body {
+                background-color: #e4e4e4;
+            }
+
+            h1 {
+                font-family: impact;
+                background-color: #ffefd7;
+                margin: 1px 1px 30px;
+                padding: 20px;
+                border-bottom: 1px solid #efefef;
+            }
+
+            form {
+                width: 350px;
+                background-color: #fff;
+                border-radius: 3px;
+                padding: 50px 40px;
+                margin: 30px auto;
+                border: 1px solid #ccc;
+            }
+
+            form label {
+                display: block;
+            }
+            form input {
+                border-radius: 0!important;
+                margin: 5px auto 30px auto
+            }
+            form [type="submit"] {
+                border-radius: 0!important;
+            }
+
+            .fa-user-circle {
+                font-size: 6em
+            }
+        </style>
+        <main>
+            <h1 class="text-center">{{ getEnv('APP_NAME') }}</h1>
+            <form action="{{ path('_admins_auth') }}" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('login_token') }}">
+                <span class="dp-table mg-auto text-center"><i class="fa fa-user-circle"></i></span><br>
+                <div class="connexion-form-body">
+                    {% for loginError in app.flashes('loginError') %}
+                    <p class="alert alert-danger" style="border-radius:0;margin-bottom:0">
+                        <i class="fa fa-remove"></i>
+                        <b>{{ loginError|raw }}</b>
+                    </p>
+                    <br>
+                    {% endfor %}
+                    <label>
+                        <span>Email</span>
+                        <input name="email" value="admin@admin" type="email" required="required" class="form-control" placeholder="vous@exemple.org">
+                    </label>
+                    <label>
+                        <span>Mot de passe</span>
+                        <input name="password" type="password" required="required" value="admin" class="form-control" />
+                        <a href="#" class="text-smoked hidden" style="float:right;font-size:10px;margin:5px 0;text-decoration:none;">oublié?</a>
+                    </label>
+                </div>
+                <footer style="margin-top:35px">
+                    <button type="submit" class="btn btn-lg btn btn-success btn-block">Connexion</button>
+                </footer>
+                <br><p class="text-center">&copy; <a href="{{ getUrl() }}">{{ getEnv('APP_NAME') }}</a></p>
+            </form>
+        </main>
+    </body>
+</html>

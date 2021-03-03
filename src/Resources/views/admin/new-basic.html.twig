@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}
+                {% for title in app.flashes('title') %}{{ title|replace({'
+        <em>':'', '</em>':''}) }}
+                {% endfor %}
+            {% endblock %}
+            |
+            {{ getEnv('APP_NAME') }}
+            | ADMIN
+        </title>
+        <link rel="stylesheet" href="{{ getAbsoluteUrl('cdn/swagg/css/imports.css') }}">
+        <script src="{{ getAbsoluteUrl('cdn/jquery/jquery-1.11.3.min.js') }}"></script>
+        <script>
+            $(function () {
+                window.__ = {};
+                __.appDir = '{{ getAppDir() }}';
+            })
+        </script>
+        <script src="{{ getAbsoluteUrl('cdn/underscore/js/underscore.js') }}"></script>
+        <script src="{{ getAbsoluteUrl('cdn/swagg/js/helpers.js') }}"></script>
+        <script src="{{ getAbsoluteUrl('cdn/swagg/js/admin.js') }}"></script>
+    </head>
+
+    <body>
+        <style type="text/css">
+
+            body {
+                background-color: #e4e4e4;
+            }
+
+            h1 {
+                font-family: impact;
+                background-color: #ffefd7;
+                margin: 1px 1px 30px;
+                padding: 20px;
+                border-bottom: 1px solid #efefef;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            form {
+                width: 350px;
+                background-color: #fff;
+                border-radius: 3px;
+                padding-bottom: 20px;
+                margin: 50px auto;
+                border: 1px solid #ccc;
+            }
+
+            form label {
+                display: block;
+            }
+
+            form .labels {
+                margin: 20px 0;
+                padding: 0 40px;
+            }
+
+            form i.fa-user {
+                font-size: 3em;
+                background-color: #428bca;
+                width: 80px;
+                height: 80px;
+                border-radius: 100%;
+                color: #fff;
+                padding-top: 15px;
+            }
+        </style>
+        <main id="blog_admin_bundle">
+            {{ form_start(form) }}
+                {{ form_widget(form._token) }}
+                <h1 class="text-center">{{ getEnv('APP_NAME') }}</h1>
+    
+                {% include '@DovStoneBlogAdminBundle/partials/validation.html.twig' %}
+
+                <span class="dp-table mg-auto text-center">
+                    <i class="fa fa-user"></i>
+                </span>
+                <!-- <h2 class="text-smoked text-center">Administrateur</h2> -->
+
+                <div class="labels">
+
+                    <label class="input-group-md">
+                        <span>Nom d'utilisateur</span>
+                        {{ form_widget(form.username) }}
+                    </label>
+                    <br>
+                    <label class="input-group-md">
+                        <span>Mot de passe</span>
+                        {{ form_widget(form.password.first) }}
+                    </label>
+                    <br>
+                    <label class="input-group-md">
+                        <span>Confirmation du mot de passe</span>
+                        {{ form_widget(form.password.second) }}
+                    </label>
+
+                    <hr>
+                    <p class="text-center"><input type="submit" class="btn btn-success" value="CREATION DE COMPTE"></p>
+                    
+                {{ form_end(form, {'render_rest': false}) }}
+            </div>
+        </main>
+    </body>
+</html>

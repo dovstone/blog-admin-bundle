@@ -1,0 +1,43 @@
+{% extends 'app/base.html.twig' %}
+
+{% block body %}
+
+    <style>.header--title-container{display:none}</style>
+     
+    <div class="cell-40 mg-auto">
+
+        <h1 class="text-center mg-title">Saisissez votre adresse mail <br>et votre mot de passe <br>pour accéder à votre espace personnel.</h1>
+
+        <form action="{{ path('userLogin') }}" method="post" class="google--placeholder">
+            <div class="form--block">
+                <input type="hidden" name="_token" value="{{ csrf_token('login_token') }}">
+                {% if userNotFound == true %}
+                <p class="alert alert-danger" style="border-radius:0">
+                    <i class="fa fa-remove"></i>
+                    <b>Identifiants incorrects</b>
+                </p>
+                {% endif %}
+                <label>
+                    <span>Téléphone ou Email</span>
+                    <input name="ident" value="{{ getLatestValue('ident') }}" type="text" required="required" class="form-control">
+                </label>
+                <label>
+                    <span>Mot de passe</span>
+                    <input name="password" type="password" required="required" value="" class="form-control" />
+                </label>
+                <p>
+                    <a href="{{ path('userForgot') }}" class="text-smoked" style="float:right;font-size:10px;margin:5px 0;text-decoration:none;">oublié ?</a>
+                </p>
+                <footer style="margin-top:35px">
+                    <button type="submit" class="btn bttn bttn-primary">Laissez-moi entrer</button>
+                </footer>
+            </div>
+        </form>
+        <div class="form--block">
+            <div class="cell-container" style="font-size:13px">
+                <div class="cell text-center">Toujours pas de compte? <a class="item-link" href="{{ path('subscriberSignup') }}"><u>S'inscrire</u></a></div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

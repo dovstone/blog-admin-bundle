@@ -1,0 +1,156 @@
+{% if isLISTING is defined %}
+
+	{% if admins is empty %}
+		<div>{{ getBundleEmptyListView() }}</div>
+	{% else %}
+
+		<div class="table-responsive">
+
+			<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+				<thead>
+					<tr>
+						<th data-minmax="20" class="text-center">N°</th>
+						<th data-minmax="155" class="text-center">Actions</th>
+						<th _data-minmax="100">Nom</th>
+						<th data-minmax="100">Role</th>
+						<th data-minmax="70" class="text-center">En fonction ?</th>
+						<th data-minmax="130" class="text-center">Création</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for admin in admins %}
+						{% set info = admin.info %}
+						<tr>
+							<td class="text-center" data-indexify="0"></td>
+							<td>
+								<div class="table-actions cell-container">
+									<div class="cell">
+										<a data-undoable="{{ path('_deleteAdmin', {'id': admin.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+											<i class="fa fa-trash"></i>
+										</a>
+									</div>
+									{% if admin.enabled == false %}
+										{% set title = 'Activer le compte' %}
+										{% set cls = 'success' %}
+										{% set action = 'on' %}
+									{% else %}
+										{% set title = 'Désactiver le compte' %}
+										{% set cls = 'warning' %}
+										{% set action = 'off' %}
+									{% endif %}
+									<div class="cell">
+										<a data-load-href="{{ path('_onOffAdmin', {'action':action, 'id': admin.id}) }}" title="{{ title }}" class="btn btn-xs btn-{{ cls }}">
+											<i class="fa fa-recycle"></i>
+											<span hidden="hidden">{{ title }}</span>
+										</a>
+									</div>
+									<div class="cell">
+										<a data-href="{{ path('_updateAdmin', {'id': admin.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ getUserFullName(admin) }}</td>
+							<td>{{ getUserRole(admin) }}</td>
+							<td class="text-center">
+								{% if admin.enabled == true %}
+									<span class="on-off on">En fonction</span>
+								{% else %}
+									<span class="on-off off">Hors-fonction</span>
+								{% endif %}
+							</td>
+							<td class="text-center">{{ admin.created|date("d/m/Y à H:i") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+			<div class="dp-table mg-auto">
+				{{ knp_pagination_render(admins, '@DovStoneBlogAdminBundle/partials/twitter_bootstrap_v4_pagination.html.twig') }}
+			</div>
+
+			<style>
+				body.backoffice #backoffice_site_content .on-off {width: 110px;}
+			</style>
+
+		</div>
+
+	{% endif %}
+	
+	<a id="btn_add_acf" title="Ajouter un nouvel administrateur" class="hidden _mdl-btn _mdl-btn-add btn-xs btn-primary" data-active="admin/create" data-href="{{ path('_createAdmin') }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+
+{% else %}
+
+	{{ form_start(form) }}
+		{% set info = form.vars.value.info %}
+		<div class="col-md-12">
+
+			{% if getUserRole(form.vars.value) != '_blog_admin' %}
+			<div class="tile tile-full">
+				<h3 class="tile-title">Rôle</h3>
+				<hr>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="field">
+							<select name="u[roles]" data-select-option="{{ form.vars.value.roles ?? '' }}" required>{{ roles|raw }}</select>
+							<label>Rôle</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% else %}
+				<input type="hidden" value="_blog_admin" name="u[roles]">
+			{% endif %}
+
+			<div class="tile tile-full">
+				<h3 class="tile-title">Infos du compte</h3>
+				<hr>
+				<div class="row">
+					<div class="col-md-12">
+						{#  #}
+						<div class="field">
+							<input required type="text" name="u[username]" value="{{ form.vars.value.username ?? '' }}" required>
+							<label>Nom Utilisateur</em></label>
+						</div>
+
+						{#  #}
+						<div class="field half">
+							<input type="text" name="u[lastname]" value="{{ form.vars.value.lastname ?? '' }}" required>
+							<label>Nom</label>
+						</div>
+						<div class="field half half-right">
+							<input type="text" name="u[firstname]" value="{{ form.vars.value.firstname ?? '' }}" required>
+							<label>Prénom</label>
+						</div>
+
+						{#  #}
+						{% if isCreating is defined %}
+							<div class="field">
+								<input type="password" name="u[password]" value="{{ form.vars.value.password ?? '' }}" required>
+								<label>Mot de passe par défaut</label>
+							</div>
+						{% endif %}
+
+						{#  #}
+						<div class="field half">
+							<input type="text" name="u[contact]" value="{{ form.vars.value.contact ?? '' }}">
+							<label>Téléphone</label>
+						</div>
+						<div class="field half half-right">
+							<input type="text" name="u[email]" value="{{ form.vars.value.email ?? '' }}">
+							<label>Email</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+		</div>
+	{{ form_end(form) }}
+
+{% endif %}

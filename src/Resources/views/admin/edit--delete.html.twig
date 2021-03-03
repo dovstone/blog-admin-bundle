@@ -1,0 +1,28 @@
+<div class="user-edit-password">
+    <p>Avant de confirmer que vous souhaitez supprimer votre profil, nous aimerions prendre un moment pour expliquer les implications de la suppression:</p>
+    <ul>
+        <li>La suppression est irréversible, et vous n'aurez aucun moyen de retrouver votre contenu original si cette suppression est effectuée et que vous changez d'avis plus tard.</li>
+    </ul>
+    <p>
+        <input data-js="profil={click:toggleBtnDeleteProfil}" type="checkbox" id="delete-terms" name="delete-terms">
+        <span>J'ai lu les informations ci-dessus et je comprends les implications de la suppression de mon profil. Je souhaite procéder à la suppression de mon profil</span>
+    </p>
+    <hr>
+    <a href="{{ path('userEditDeleteSubmit', {'id': app.user.id}) }}" data-swagg-confirm='["Supprimer", "la <b>suppression définitive</b> de votre profil {{ getEnv('APP_NAME') }}"]' type="button" id="btn_delete_profil" class="btn btn-sm btn-danger" disabled="disabled">Supprimer Profil</a>
+</div>
+<script>
+    $(function () {
+        __.dataJs({
+            profil: {
+                toggleBtnDeleteProfil: function (checkbox) {
+                    var btn = $('#btn_delete_profil');
+                    if (checkbox.is(':checked')) {
+                        btn.removeAttr('disabled').attr('type', 'submit');
+                    } else {
+                        btn.attr({'disabled': 'disabled', 'type': 'button'});
+                    }
+                }
+            }
+        })
+    })
+</script>

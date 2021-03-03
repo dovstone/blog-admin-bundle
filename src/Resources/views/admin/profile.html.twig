@@ -1,0 +1,20 @@
+<div class="col-md-12">
+    <div class="tile tile-full">
+        <div class="profile-container">
+	        <div class="row">
+	            <div class="col-sm-8 col-md-8" _style="height:175px">
+	                {% if page is not defined %}
+	                	{% include "@DovStoneBlogAdminBundle/admin/partials/header.html.twig" with {'user': app.user} %}
+	                {% else %}
+	                	<div class="profile-view">
+	                		{% include "@DovStoneBlogAdminBundle/admin/"~page~".html.twig" %}
+	                	</div>
+	                {% endif %}
+	            </div>
+	            <div class="col-sm-4 col-md-4">
+	                {% include "@DovStoneBlogAdminBundle/admin/partials/aside.html.twig" %}
+	            </div>
+	        </div>
+		</div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+{% extends '@DovStoneBlogAdminBundle/base.html.twig' %}
+
+{% block body %}
+
+    {% if admins is empty %}
+        {% include '@DovStoneBlogAdminBundle/partials/empty-list.html.twig' %}
+    {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ getUrl('cdn/swagg/css/table.css') }}">
+    <div class="dp-table mg-auto">
+        {{ knp_pagination_render(admins, '@DovStoneBlogAdminBundle/partials/twitter_bootstrap_v4_pagination.html.twig') }}
+    </div>
+
+    <style>
+        .table .table-actions {
+            top: 0
+        }
+        .table-responsive {
+            position: relative;
+            top: -2px;
+        }
+        .thumbnail-container {
+            position: absolute;
+            top: 0;
+            margin: 3px 0;
+        }
+    </style>
+
+    <div class="table-responsive">
+        <table class="table has-thumbnail">
+            <thead>
+                <tr class="tabTop">
+                    <th data-minmax="40" class="text-center">N°</th>
+                    <th data-minmax="130" class="text-center">Actions</th>
+                    <th data-minmax="60" class="text-center">Statut</th>
+                    <th data-minmax="80" class="text-center">Matricule</th>
+                    <th class="td-username">Nom et prénoms</th>
+                    <th data-minmax="140" class="text-center">Téléphone</th>
+                    <th data-minmax="150" class="text-center">Ajout de compte</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for operator in admins %}
+                <tr>
+                    <td class="text-center" data-indexify="15"></td>
+                    <td>
+                        <div class="table-actions cell-container">
+                            <div class="cell">
+                                <a href="{{ path('_admins_show', {'id': operator.id}) }}" title="Voir le profil" class="btn btn-xs btn-primary">
+                                    <span hidden="hidden">Voir le profil</span>
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </div>
+                            {% if is_granted('ROLE__BLOG_ADMIN') %}
+                            <div class="cell">
+                                {% if operator.enabled == false %}
+                                <a data-swagg-confirm='["Désactiver", "la désactivation de ce compte Opérateur"]' href="{{ path('_admins_ED', {'id': operator.id, 'action': 'disable'}) }}"
+                                    title="Désactiver" class="btn btn-xs btn-warning">
+                                    <span hidden="hidden">Désactiver</span>
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                                {% else %}
+                                <a data-swagg-confirm='["Activer", "la ré-activation de ce compte Opérateur"]' href="{{ path('_admins_ED', {'id': operator.id, 'action': 'enable'}) }}"
+                                    title="Activer" class="btn btn-xs btn-success">
+                                    <span hidden="hidden">Activer</span>
+                                    <i class="fa fa-recycle"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="cell">
+                                <a data-swagg-confirm='["Supprimer", "la suppression de ce compte Opérateur"]' href="{{ path('_admins_delete', {'id': operator.id}) }}"
+                                    title="Supprimer" class="btn btn-xs btn-danger">
+                                    <span hidden="hidden">Supprimer</span>
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="text-center nonresponsive">
+                        {% if operator.enabled == false %}
+                        <span class="en-ligne en-ligne-oui">Actif</span>
+                        {% else %}
+                        <span class="en-ligne en-ligne-non">Inactif</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">{{ operator.mle }}</td>
+                    <td>
+                        <div class="thumbnail-container">
+                            <span class="cell text-center" data-minmax="32">
+                                {% if operator.thumbnail is same as(null) %} 
+                                    {% set thumbnail = 'cdn/swagg/img/default-28x28.png' %} 
+                                {% else %} 
+                                    {% set thumbnail = 'uploads/users/' ~ operator.thumbnail ~ '--32x32.png' %} 
+                                {% endif %}
+                                <img class="img-thumb" src="{{ getUrl(thumbnail) }}" />
+                            </span>
+                            <span class="cell cell-spacer-10"></span>
+                            <span class="cell">{{ operator.lastname }} {{ operator.firstname }}</span>
+                        </div>
+                    </td>
+                    <td class="text-center">{{ operator.contact }}</td>
+                    <td class="text-center">{{ operator.created|date("d/m/Y à H:i") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dp-table mg-auto">
+        {{ knp_pagination_render(admins, '@DovStoneBlogAdminBundle/partials/twitter_bootstrap_v4_pagination.html.twig') }}
+    </div>
+    {% endif %}
+
+{% endblock %}

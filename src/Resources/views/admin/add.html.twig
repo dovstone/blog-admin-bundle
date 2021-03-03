@@ -1,0 +1,42 @@
+{% extends '@DovStoneBlogAdminBundle/base.html.twig' %}
+
+{% block body %}
+<style>
+    .add-operator-form form {
+        width: 400px;
+        margin: auto;
+    }
+    .add-operator-form input {
+        border-radius: 0!important
+    }
+</style>
+{{ form_start(form) }}
+{{ form_widget(form._token) }}
+<section>
+    <header>Infos personnelles</header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <label>
+                    <span>Nom</span>
+                    {{ form_widget(form.lastname) }} 
+                    {{ getValidatorAlertHTMLTag('lastname') }}
+                </label>
+                <label>
+                    <span>Prénom</span>
+                    {{ form_widget(form.firstname) }} 
+                    {{ getValidatorAlertHTMLTag('firstname') }}
+                </label>
+                <label>
+                    <span>Email</span>
+                    {{ form_widget(form.email) }} 
+                    {{ getValidatorAlertHTMLTag('email') }}
+                </label><p>
+            </div>
+        </div>
+    </div>
+</section>
+<p hidden>{{ form_widget(form.submit) }}</p>
+{{ form_end(form, {'render_rest':false}) }}
+
+{% endblock %}
