@@ -1,0 +1,18 @@
+{% extends '@DovStoneBlogAdminBundle/website/base.html.twig' %}
+
+{% block body %}
+    {{ getHeader() }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                {{ getBody() }}
+            </div>
+            <div class="col-xs-12 col-md-3">
+                {{ getSideBar() }}
+            </div>
+        </div>
+    </div>
+
+    {{ getFooter() }}
+{% endblock %}

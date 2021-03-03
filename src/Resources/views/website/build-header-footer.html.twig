@@ -1,0 +1,13 @@
+{{ beginHTML(['app']) }}
+
+<div id="swagg_main_container">
+    <div id="swagg_sections_wrapper">
+        {% if post.type == 'headerrr' %}
+            <header id="swagg_main_header" class="swagg-main-header">{{ post.sections|raw }}</header>
+        {% else %}
+            <footer id="swagg_main_footer" class="swagg-main-footer">{{ post.sections|raw }}</footer>
+        {% endif %}
+    </div>
+</div>
+
+{{ endHTML(['app']) }}

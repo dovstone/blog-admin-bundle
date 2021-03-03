@@ -1,0 +1,21 @@
+{{ beginHTML() }}
+
+{{ getBody() }}
+
+<script>
+$(function(){
+  __.requireJs([__.getAppConfig('cdn_host') + '/ScssToCss/js/sass.min'], function() {
+    var scss = ['style', 'filebrowser', 'private-page-builder'];
+    $.each(scss, function(i, scss) {
+      $.get(__.getUrl('dev-assets/scss/_admin/' + scss + '.scss'), function(s) {
+        new Sass(__.getAppConfig('cdn_host') + '/ScssToCss/js/sass.worker.js').compile(s, function(s) {
+          var scssId = (scss + '_scss').replaceAll('/', '__');
+          $('#' + scssId).remove();
+          $("head").prepend($('<style id="' + scssId + '" />').text(s.text));
+        })
+      });
+    });
+  });
+});</script>
+
+{{ endHTML() }}
