@@ -7,16 +7,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 use DovStone\Bundle\BlogAdminBundle\Entity\Admin;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
-class AdminLoginType extends AbstractType
+class AdminSigninType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('_username', TextType::class, ['attr' => ['class' => 'form-control', 'placeholder' => "Nom d'utilisateur"]])
-            ->add('_password', PasswordType::class, ['attr' => ['class' => 'form-control', 'placeholder' => "Mot de passe"]])
+            ->add('username', TextType::class, ['attr' => ['class' => 'form-control']])
+            ->add('password', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'required' => true,
+                'first_options' => ['attr' => ['class' => 'form-control']],
+                'second_options' => ['attr' => ['class' => 'form-control']],
+            ])
             ->add('submit', SubmitType::class, ['label' => 'CONNEXION', 'attr' => ['class' => 'form-control btn btn-success input-lg']]);
     }
 
