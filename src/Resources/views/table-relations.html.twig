@@ -1,0 +1,26 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+{{ form_start(form) }}
+    {% set info = form.vars.value.info %}
+    <div class="row unselectable">
+        <div class="col-md-12">
+            <div class="tile tile-full tile-fields-shortcut">
+					<h3 class="tile-title">Dictionnaire des relations</h3>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" name="info[title]" value="Dictionnaire des relations">
+                        <div class="field">
+                            <textarea placeholder="-- hasMay -- @tables mappedBy --
+-- belongsTo -- @tables inversedBy --
+" data-id="fields_list" name="info[relations]" rows="8" required>{{ info.relations ?? '' }}</textarea>
+                            <label>Dictionnaire des relations</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+    </div>
+{{ form_end(form) }}

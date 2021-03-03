@@ -1,0 +1,281 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+{% if isREADING is defined %}
+
+	{% include '@DovStoneBlogAdminBundle/partials/search.html.twig' with {'pathName':'_searchIn', 'type': type} %}
+
+	{% if bloggy is empty %}
+		<div>{{ getBundleEmptyListView() }}</div>
+	{% else %}
+
+		<div class="table-responsive">
+
+			<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+				<thead>
+					<tr>
+						<th data-minmax="20" class="text-center">N°</th>
+						<th data-minmax="155" class="text-center">Actions</th>
+						<th data-minmax="100">Titre</th>
+						<th>Lien</td>
+						<th data-minmax="110">Parent</th>
+						<th data-minmax="80">Layout</th>
+						<th data-minmax="80" class="text-center">En ligne ?</th>
+						<th data-minmax="135" class="text-center">Création</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for page in bloggy %}
+						{% set page = fetchBundleEager(page) %}
+						{% set info = page.info %}
+						{% set href = getPostHref(page) %}
+						<tr>
+							<td class="text-center" data-indexify="0"></td>
+							<td>
+								<div class="table-actions cell-container">
+									<div class="cell">
+										<a data-undoable="{{ path('_deleteBloggy', {'id': page.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+											<i class="fa fa-trash"></i>
+										</a>
+									</div>
+									{% if page.enabled == false %}
+										{% set title = 'Publier' %}
+										{% set cls = 'warning' %}
+										{% set action = 'on' %}
+									{% else %}
+										{% set title = 'Mettre en relecture' %}
+										{% set cls = 'success' %}
+										{% set action = 'off' %}
+									{% endif %}
+									<div class="cell">
+										<a data-load-href="{{ path('_onOffBloggy', {'action':action, 'id': page.id}) }}" title="{{ title }}" class="btn btn-xs btn-{{ cls }}">
+											<i class="fa fa-recycle"></i>
+											<span hidden="hidden">{{ title }}</span>
+										</a>
+									</div>
+									<div class="cell">
+										<a data-href="{{ path('_updateBloggy', {'type': 'page', 'id': page.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</div>
+									<div class="cell">
+										<a target="_blank" href="{{ href }}?swagg" title="Construire" class="btn btn-xs btn-primary">
+											<i class="fa fa-windows"></i>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ info.title }}</td>
+							<td title="{{ href }}">
+								<a target="_blank" href="{{ href }}">{{ href }}</a>
+							</td>
+							{% set parent = page.parent == null ? 'A U C U N' : page.parent.info.title %}
+							<td title="{{ parent }}">
+								{% if page.parent == null %}
+									<em class="text-smoked">{{ parent }}</em>
+								{% else %}
+									{{ parent }}
+								{% endif %}
+							</td>
+							<td>{{ info.layout }}</td>
+							<td class="text-center">
+								{% if page.enabled == true %}
+									<span class="on-off on">En ligne</span>
+								{% else %}
+									<span class="on-off off">Hors-ligne</span>
+								{% endif %}
+							</td>
+							<td class="text-center">{{ page.created|date("d/m/Y à H:i") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+			<div class="dp-table mg-auto">
+				{{ knp_pagination_render(bloggy_, getKnpTplPath()) }}
+			</div>
+
+		</div>
+
+	{% endif %}
+		
+	<a id="btn_add_acf" title="Ajouter une nouvelle page" class="hidden _mdl-btn _mdl-btn-add btn-xs btn-primary" data-active="acf/create" data-href="{{ path('_createBloggy', {'type': 'page'}) }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+
+{% else %}
+
+	<script src="{{ getCDN('swagg/plugins/acf/acf.js?v=' ~ random()) }}"></script>
+    <script type="text/javascript" src="{{ getCDN('swagg/plugins/files-browser/files-browser.js?v=' ~ random()) }}"></script>
+    <script type="text/javascript" src="{{ getCDN('swagg/plugins/icons-browser/icons-browser.js?v=' ~ random()) }}"></script>
+  	<script type="text/javascript" src="{{ getCDN('iconify/js/iconify.min.js') }}"></script>
+	<script src="{{ getCDN('swagg/plugins/acf/acf.js?v=' ~ random()) }}"></script>
+	<style>body .widget-image-preview-area{ height: 127px }</style>
+
+	{{ form_start(form) }}
+		{% set info = form.vars.value.info %}
+		<div class="row">
+			<div class="col-md-12">
+
+				<div class="tile tile-full">
+					<h3 class="tile-title">Infos &amp; Réferencement</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-8">
+
+							{#  #}
+							<div class="field">
+								<select class="select2-basic" name="info[parent]" data-select-option="{{ info.parent ?? '' }}">
+									{{ options.pages }}
+								</select>
+								<label>Page parent</label>
+							</div>
+
+							{#  #}
+							<div class="field half">
+								<input required type="text" name="info[title]" value="{{ info.title ?? '' }}">
+								<label>Titre <em>(Sera affiché dans le menu)</em></label>
+							</div>
+							<div class="field half half-right">
+								<input type="text" name="info[long_title]" value="{{ info.long_title ?? '' }}">
+								<label>Second titre <em>(Sera affiché dans l'onglet du navigateur)</em></label>
+							</div>
+
+							{#  #}
+							<div class="field half">
+								<input type="text" name="_info[slug]" value="{{ form.vars.value.slug ?? '' }}">
+								<label>Slug</label>
+							</div>
+							<div class="field half half-right">
+								<input type="text" name="info[customed_slug]" value="{{ info.customed_slug ?? '' }}">
+								<label>Slug personnalisé</label>
+							</div>
+
+							{#  #}
+							<div class="field half">
+								<input type="text" name="info[keywords]" value="{{ info.keywords ?? '' }}">
+								<label>Mots-clés</label>
+							</div>
+							<div class="field half half-right">
+								<input type="number" min="0" name="info[rank]" value="{{ info.rank ?? 0 }}">
+								<label>Position dans un menu de navigation</label>
+							</div>
+
+							{#  #}
+							<div class="field hidden">
+								<input type="text" name="info[href]" value="{{ info.href ?? '' }}">
+								<label>URL perso. <em>(Ex: domaine.com/#slug)</em></label>
+							</div>
+
+							{#  #}
+							<div class="field">
+								<textarea style="resize:none" rows="4" name="info[description]">{{ info.description ?? '' }}</textarea>
+								<label>Brève description</label>
+							</div>
+						</div>
+
+						<div class="col-md-4">
+
+							{#  #}
+							<label class="switch">
+								<input type="checkbox" name="_info[enabled]" {{form.vars.value.enabled is defined and form.vars.value.enabled == true ? 'checked' : ''}}>
+								<b>Publier</b>
+							</label>
+							<label class="switch">
+								<input data-js="page={click:toggleNavsField}" type="checkbox" name="info[in_menu]" {{info.in_menu is defined and info.in_menu == true ? 'checked' : ''}}>
+								<b>Visible dans un menu</b>
+							</label>
+							<label style="margin:-15px 0 0 53px;width:auto;" class="field"{{info.in_menu is defined and info.in_menu == true ? '' : ' style="display:none"'}}>
+								<select class="select2-basic" name="info[structure]" data-select-option="{{ info.structure ?? '' }}">
+									{{ options.navs }}
+								</select>
+								<label>Structure de navigation</label>
+							</label>
+
+							{#  #}
+							<label class="switch hidden">
+								<input type="checkbox" name="info[auth]" {{info.auth is defined and info.auth == true ? 'checked' : ''}}>
+								<b>Authentique</b>
+							</label>
+							<label class="switch">
+								<input type="checkbox" name="info[comments]" {{info.comments is defined and info.comments == true ? 'checked' : ''}}>
+								<b>Activer Commentaires</b>
+							</label>
+
+							{#  #}
+							<div class="field half">
+								<input
+									data-onpageloaded="click" data-js="ACF={click:fileControl__previewPicked}"
+									type="hidden"
+									name="info[thumb]"
+									value="{{ info.thumb ?? '' }}"
+									data-info='{{ {'extension':'jpg', 'extended_filename':info.thumb ?? ''}|json_encode }}'
+								/>
+								<label>Image d'avant-plan</label>
+								<div data-js="ACF={click:fileControl__getLibrary}" class="widget-preview-area is-empty">
+									<a data-js="ACF={click:fileControl__removeFile}" title="Retirer"><i class="fa fa-trash"></i></a>
+								</div>
+							</div>
+							<div class="field half half-right">
+								<input data-onpageloaded="click" data-js="ACF={click:iconControl__previewPicked}" type="hidden" name="info[icon]" value="{{ info.icon ?? '' }}" />
+								<label>Icône</label>
+								<div data-js="ACF={click:iconControl__getLibrary}" class="widget-preview-area is-empty">
+									<a data-js="ACF={click:iconControl__removeIcon}" title="Retirer"><i class="fa fa-trash"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tile tile-full">
+					<h3 class="tile-title">Layout</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+							{#  #}
+							<div class="field">
+								<select class="select2-basic" name="info[layout]" data-select-option="{{ info.layout ?? '' }}">
+									{{ options.layouts }}
+								</select>
+								<label>Sélectionner un Layout</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tile tile-full">
+					<h3 class="tile-title">Corps de la page</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+							{#  #}
+							{% if isEditMode is defined %}
+								<a target="_blank" href="{{ getPostHref(fetchEager(form.vars.value, true)) }}?swagg">Editer le corps de la page <strong><em>"{{ info.title }}"</em></strong></a>
+							{% else %}
+								<a>Vous devez dabord <u><strong>Enregister la page</strong></u> avant de pouvoir en rédiger le corps.</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+		</div>
+	{{ form_end(form) }}
+
+	<script>
+		$(function(){
+			'use strict';
+			__.dataJs({
+				page: {
+					toggleNavsField: function($t){
+						$t.parents('.switch').next('.field')[ $t[0].checked == true ? 'show' : 'hide' ]();
+					}
+				}
+			})
+		})
+	</script>
+
+{% endif %}

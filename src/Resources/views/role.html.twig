@@ -1,0 +1,87 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+{% if isREADING is defined %}
+	
+	{% include '@DovStoneBlogAdminBundle/partials/search.html.twig' with {'pathName':'_searchIn', 'type': type} %}
+
+	{% if bloggy is empty %}
+		<div>{{ getBundleEmptyListView() }}</div>
+	{% else %}
+
+		<div class="table-responsive">
+
+			<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+				<thead>
+					<tr>
+						<th data-minmax="20" class="text-center">N°</th>
+						<th data-minmax="130" class="text-center">Actions</th>
+						<th>Rôle</th>
+						<th data-minmax="130" class="text-center">Création</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for role in bloggy %}
+						<tr>
+							<td class="text-center" data-indexify="0"></td>
+							<td>
+								<div class="table-actions cell-container">
+									<div class="cell">
+										<a data-undoable="{{ path('_deleteBloggy', {'id': role.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+											<i class="fa fa-trash"></i>
+										</a>
+									</div>
+									<div class="cell">
+										<a data-href="{{ path('_updateBloggy', {'type': 'role', 'id': role.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ role.info.title }}</td>
+							<td class="text-center">{{ role.created|date("d/m/Y à H:i") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+			<div class="dp-table mg-auto">
+				{{ knp_pagination_render(bloggy_, getKnpTplPath()) }}
+			</div>
+
+		</div>
+
+	{% endif %}
+
+	<a id="btn_add_acf" title="Ajouter un rôle" class="hidden _mdl-btn _mdl-btn-add btn-xs btn-primary" data-active="acf/create" data-href="{{ path('_createBloggy', {'type': 'role'}) }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+
+{% else %}
+
+	{{ form_start(form) }}
+		{% set info = form.vars.value.info %}
+		<div class="row">
+
+			<div class="col-md-12">
+				<div class="tile tile-full">
+					<h3 class="tile-title">Désignation</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+							{#  #}
+							<div class="field">
+								<input type="text" required name="info[title]" value="{{ info.title ?? '' }}">
+								<label>Désignation</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+		</div>
+	{{ form_end(form) }}
+
+{% endif %}

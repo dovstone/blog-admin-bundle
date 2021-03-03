@@ -1,0 +1,202 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+{% if isREADING is defined %}
+	
+	{% include '@DovStoneBlogAdminBundle/partials/search.html.twig' with {'pathName':'_searchIn', 'type': type} %}
+
+	{# {{ filterForm }}
+	<p class="text-center">{{ getResultsFoundText(total) }}</p><br> #}
+
+	{% if bloggy is empty %}
+		<div>{{ getBundleEmptyListView() }}</div>
+	{% else %}
+
+		<div class="table-responsive">
+
+			<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+				<thead>
+					<tr>
+						<th data-minmax="20" class="text-center">N°</th>
+						<th data-minmax="130" class="text-center">Actions</th>
+						<th>Titre</th>
+						<th data-minmax="130" class="text-center">Création</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for menu in bloggy %}
+						<tr>
+							<td class="text-center" data-indexify="0"></td>
+							<td>
+								<div class="table-actions cell-container">
+									<div class="cell">
+										<a data-undoable="{{ path('_deleteBloggy', {'id': menu.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+											<i class="fa fa-trash"></i>
+										</a>
+									</div>
+									<div class="cell">
+										<a data-href="{{ path('_updateBloggy', {'type': 'menu', 'id': menu.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ menu.info.title }}</td>
+							<td class="text-center">{{ menu.created|date("d/m/Y à H:i") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+			<div class="dp-table mg-auto">
+				{{ knp_pagination_render(bloggy_, getKnpTplPath()) }}
+			</div>
+
+		</div>
+
+	{% endif %}
+
+	<a id="btn_add_acf" title="Ajouter une nouveau menu" class="hidden _mdl-btn _mdl-btn-add btn-xs btn-primary" data-active="acf/create" data-href="{{ path('_createBloggy', {'type': 'menu'}) }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+
+{% else %}
+
+	{{ form_start(form) }}
+		{% set info = form.vars.value.info %}
+		<div class="row">
+
+			<div class="col-md-4">
+				<div class="tile tile-full">
+					<h3 class="tile-title">Pages</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+							<div id="menu_pages_wrapper" class="menu-pages-wrapper">
+								{{ options.menus }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-8">
+				<div class="tile tile-full">
+					<h3 class="tile-title">Menu de navigation</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12" id="menu_nav_containment">
+							{#  #}
+							<div class="field">
+								<input type="text" required name="info[title]" value="{{ info.title ?? '' }}">
+								<label>Nom du menu</label>
+							</div>
+
+							{#  #}
+							<label class="field">
+								<select class="select2-basic" name="info[structure]" data-select-option="{{ info.structure ?? '' }}">
+									{{ options.navs }}
+								</select>
+								<label>Structure (Sera appliquée pour tous les éléments du menu)</label>
+							</label>
+
+							<div id="menu_nav_preview" class="menu-nav-preview unselectable"><ul></ul></div>
+							<textarea name="info[pages_ids]" id="pages_ids" class="hidden">{{ info.pages_ids ?? '[]' }}</textarea>
+							<input type="hidden" name="_info[enabled]" value="1">
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+		</div>
+	{{ form_end(form) }}
+
+{% endif %}
+
+<script>
+	$(function(){
+		"use strict";
+
+		var $menu_pages_wrapper = $('#menu_pages_wrapper'),
+			$menu_nav_preview = $('#menu_nav_preview'),
+			$preview = $menu_nav_preview.find('ul'),
+			$pages_ids = $('#pages_ids'),
+			Nav = {
+				init: function(){
+
+					this.dataJs();
+					
+					__.jqueryUi();
+
+					_.delay(function(){
+						try {
+							var pages_ids = $.parseJSON($pages_ids.html());
+							$.each(pages_ids, function (i, page_id) {
+								$menu_pages_wrapper.find('input[type="checkbox"][value="' + page_id + '"]').trigger('click');
+							});
+						} catch (e) { console.log(e); }
+					}, 250)
+				},
+				dataJs: function(){
+					__.dataJs({
+						navs: {
+							appendToNav: function ($trigger) {
+								Nav.handleCheck($trigger);
+							},
+							collapse: function ($trigger) { }
+						}
+					});
+				},
+				handleCheck: function($input){
+					var id = $input.parents('li').attr('data-id');
+
+						__.elementExistsAlias({
+							el: $preview.find('[data-id="' + id + '"]'),
+							onNotExists: function ($el) {
+								$preview.append(
+									$('<li data-id="' + id + '" />').append(
+										$input.find('~.title .mdl-switch__label').clone()
+									)
+								);
+								Nav.bindJqueryUi();
+							},
+							onExists: function($el){
+								$el.remove();
+							}
+						});
+						Nav.resortPagesIds();
+				},
+				bindJqueryUi: function () {
+
+					__.jqueryUi({
+						onLoaded: function () {
+							$preview.sortable({
+								connectWith: '#menu_nav_preview',
+								placeholder: "ui-state-highlight",
+								containment: '#menu_nav_containment',
+								start: function (a, b) {
+									b.item.addClass('sorting-item');
+								},
+								stop: function (a, b) {
+									b.item.removeClass('sorting-item');
+									Nav.resortPagesIds();
+								}
+							});
+						}
+					});
+				},
+				resortPagesIds: function(){
+					var data = [];
+					_.each($preview.find('li'), function (li, i) {
+						data.push( $(li).attr('data-id') );
+					});
+					$pages_ids.html(JSON.stringify(data))
+				},
+			};
+
+			Nav.init();
+	});
+</script>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html data-app-config='{{ getAppConfig() }}'>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<title>{{ getEnv('APP_NAME') }} | BACK-OFFICE</title>
+	<meta name="description" content="{{ getEnv('APP_NAME') }} | BACK-OFFICE">
+	<meta name="keywords" content="{{ getEnv('APP_NAME') }}">
+	<meta name="author" content="">
+	<meta name="url" content="{{ getCurrentUrl() }}">
+	<link rel="canonical" href="{{ getCurrentUrl() }}" />
+	<link rel="icon" type="image/png" sizes="16x16" href="">
+	<meta property="og:url" content="{{ getCurrentUrl() }}" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{{ getEnv('APP_NAME') }} | BACK-OFFICE" />
+	<meta property="og:description" content="{{ getEnv('APP_NAME') }} | BACK-OFFICE" />
+	<meta property="og:image" content="" />
+
+    {{ getHeadAssets() }}
+
+    <link href="{{ getCDN('swagg/plugins/backoffice/fonts/Kodchasan/style.css?family=Kodchasan:600&display=swap') }}" rel="stylesheet">
+    <link href="{{ getCDN('swagg/plugins/backoffice/fonts/Dosis/style.css?family=Dosis&display=swap') }}" rel="stylesheet">
+
+    {% if getEnv() == 'dev' and isLocalHost() %}
+        <link rel="stylesheet" href="http://localhost:{{ getEnv('ENCORE_PORT') }}/assets/css/_admin/backoffice.css">
+    {% else %}
+        <link rel="stylesheet" href="{{ getCDN('swagg/plugins/backoffice/backoffice.css?v=' ~ random()) }}">
+    {% endif %}
+    
+	<script src="{{ getCDN('swagg/plugins/backoffice/backoffice.js?v=' ~ random() ) }}"></script>
+
+</head>
+<body class="backoffice pending pending-loader pending-transparent _pending-transparentless">
+	<div id="backoffice_site_content">
+
+		<div class="loader-wrapper">
+			<div class="loader vam">
+				<div class="swagg-logo-wrapper">
+					<img height="100" title="Swagg 2.0" src="{{ getCDN('swagg/assets/img/swagg-logo.png') }}">
+				</div>
+				<div class="appname-logo-wrapper">
+					<img style="max-width:150px" title="{{ getEnv('APP_NAME') }}" src="{{ getAsset('logo.png?v=') ~ random() }}">
+				</div>
+			</div>
+		</div>
+
+		{# <div id="progress" class="mdl-progress mdl-js-progress mdl-progress-indeterminate">
+			<div class="mdl-snackbar__text"></div>
+			<button class="mdl-snackbar__action" type="button"></button>
+		</div> #}
+
+		<aside id="main_aside" class="main-aside">
+
+			<header class="main-aside--header">
+				<button data-js="BackOffice={click:toggleAside}"><i class="fa fa-bars"></i> <span>SWAGG</span></button>
+			</header>
+			<div class="main-aside--content">
+
+				<nav data-nav-active="true">
+					<ul>
+						{% if app.user is not null %}
+						<li style="padding-bottom:0">
+							<a data-active="profile" data-href="{{ path('_adminProfile') }}"><i class="fa fa-user"></i><span>{{ app.user.username }}</span></a>
+							<a href="{{ path('_logoutAdmin') }}"><i class="fa fa-power-off"></i><span style="color:#c32222">Se déconnecter</span></a>
+							<hr>
+						</li>
+						{% endif %}
+						<li class="has-sub hidden">
+							<div><i class="fa fa-plus"></i><span>Ajouter</span></div>
+							<span class="sub">
+								<a title="Ajouter Page" class="small" data-active="page/create" data-href="{{ path('_createBloggy', {'type': 'page'}) }}"><i class="fa fa-file-text-o"></i><span>Page</span></a>
+								<a title="Ajouter Menu" class="small" data-active="menu/create" data-href="{{ path('_createBloggy', {'type': 'menu'}) }}"><i class="fa fa-plus"></i><span>Menu</span></a>
+								<a title="Ajouter Administrateur" class="small" data-active="users/create" data-href="{{ path('_createAdmin') }}"><i class="fa fa-user-secret"></i><span>Administrateurs</span></a>
+								<a hidden title="Ajouter Article" class="small" data-active="article/create" data-href="{{ path('_createBloggy', {'type': 'article'}) }}"><i class="fa fa-pencil"></i><span>Article</span></a>
+
+								{% if getStorage('___ACFCollection', true) %}
+									{% for acf in getStorage('___ACFCollection', true) %}
+										<a title="Ajouter {{ acf.info.title_singular }}" class="small" data-active="acf/{{acf.slug}}/create" data-href="{{ path('_createACFBloggy', {'slug': acf.slug}) }}">
+											<i class="fa fa-{{ acf.info.icone ?? 'file-text-o' }}"></i><span>{{ acf.info.title_singular }}</span>
+										</a>
+									{% endfor %}
+								{% endif %}
+							</span>
+						</li>
+						<li>
+							<a title="Aller au site web" href="{{ getUrl() }}" target="_blank"><i class="fa fa-eye"></i><span>Aller au site web</span></a>
+							<a title="Tableau de bord" data-active="dashboard" data-href="{{ path('_dashboard') }}"><i class="fa fa-dashboard"></i><span>Tableau de bord</span></a>
+							<a title="Pages" data-active="page" data-href="{{ path('_listBloggy', {'type': 'page'}) }}"><i class="fa fa-files-o"></i><span>Pages</span></a>
+							<a title="Menus" data-active="menu" data-href="{{ path('_listBloggy', {'type': 'menu'}) }}"><i class="fa fa-sitemap"></i><span>Menus</span></a>
+							<a title="Rôles" data-active="role" data-href="{{ path('_listBloggy', {'type': 'role'}) }}"><i class="fa fa-lock"></i><span>Rôles</span></a>
+							<a title="Utilisateurs" data-active="users" data-href="{{ path('_listAdmins') }}"><i class="fa fa-user-secret"></i><span>Utilisateurs</span></a>
+							<a hidden title="Articles" data-active="article" data-href="{{ path('_listBloggy', {'type': 'article'}) }}"><i class="fa fa-newspaper-o"></i><span>Articles</span></a>
+							<a hidden title="Bibliothèque" href="javascript:void()"><i class="fa fa-picture-o"></i><span>Bibliothèque</span></a>
+							
+							{% if getStorage('___ACFCollection', true) %}
+								<hr>
+								{% for acf in getStorage('___ACFCollection', true) %}
+									{% if acf.enabled == true %}
+										<a title="{{ acf.info.title }}" data-active="{{acf.slug}}/list" data-href="{{ path('_listACFBloggy', {'type':acf.slug}) }}">
+											<i class="fa fa-{{ acf.info.icone ?? 'file-text-o' }}"></i><span>{{ acf.info.title }}</span>
+										</a>
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+							
+							{% if getGlobal('___backOfficeNav', true) %}
+								<hr>
+								{{ getGlobal('___backOfficeNav') }}
+							{% endif %}
+						</li>
+
+						<li class="has-sub">
+							<div><i class="fa fa-puzzle-piece"></i><span>ACF</span></div>
+							<span class="sub">
+								<a title="Ajouter ACF" class="small" data-active="acf/create" data-href="{{ path('_createBloggy', {'type': 'acf'}) }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+								<a title="Tous les ACF" class="small" data-active="acf/list" data-href="{{ path('_listBloggy', {'type': 'acf'}) }}"><i class="fa fa-puzzle-piece"></i><span>Tous les ACF</span></a>
+								<a title="Relations" class="small" data-active="table-relations" data-href="{{ path('_createBloggy', {'type': 'table-relations'}) }}"><i class="fa fa-link"></i><span>Relations</span></a>
+							</span>
+						</li>
+
+
+					</ul>
+				</nav>
+
+			</div>
+		</aside>
+
+		<main>
+			<header id="main_header" class="main--header">
+				<h2 class="pull-left text-uppercase app-name">{{ getEnv('APP_NAME') }}</h2>
+				<div class="pull-right">
+					{% if app.user is not null %}
+						<a data-href="{{ path('_adminProfile') }}">
+							<div class="logged-in-as">{{ app.user.username }}</div>
+							<div class="logged-in-avatar"><img class="avatar" src="{{ getCDN('swagg/assets/img/default-90x90.png') }}" /></div>
+						</a>
+					{% endif %}
+				</div>
+			</header>
+			<div class="main--content">
+				<header id="headers_wrapper" class="main-content--header">
+                    <h1 id="page_title" class="heading text-ellipsis"></h1>
+                </header>
+				<div id="pages_wrapper">
+                    <div class="page"></div>
+                </div>
+			</div>
+		</main>
+
+		<footer id="main_footer" class="main-footer"></footer>
+
+		<div id="snackbars_wrapper" class="snackbars-wrapper"></div>
+
+	</div>
+
+	<script type="text/javascript">
+	$(function(){
+		'use strict';
+        BackOffice.init({
+            onBeforeSend: function () {BackOffice.setPendingState($('body'), true);},
+            onSuccess: function () {
+				BackOffice.unsetPendingState($('body'), 600);
+				
+				$('#btn_add_acf.cloned').remove();
+				$('#page_title').append($('#btn_add_acf').clone().addClass('cloned').removeClass('hidden'));
+			},
+            onBound: function () {
+				BackOffice.checkAuthenticationStatus();
+            }
+        });
+
+		var securedCssInjection = __.getUrlVar('secured-css-injection');
+		if( securedCssInjection ){ $('body').append(securedCssInjection); }
+	});
+	</script>
+</body>
+</html>

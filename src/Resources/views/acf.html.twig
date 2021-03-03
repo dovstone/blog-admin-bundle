@@ -1,0 +1,296 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+{% if isREADING is defined %}
+	
+	{% include '@DovStoneBlogAdminBundle/partials/search.html.twig' with {'pathName':'_searchInACF', 'type': type} %}
+
+	{% if bloggy is empty %}
+		<div>{{ getBundleEmptyListView() }}</div>
+	{% else %}
+		<div class="table-responsive">
+
+			<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+				<thead>
+					<tr>
+						<th data-minmax="20" class="text-center">N°</th>
+						<th data-minmax="160" class="text-center">Actions</th>
+						<th data-minmax="1">Titre</th>
+						<th>Attribut <em>name</em></th>
+						<th data-minmax="130" class="text-center">Création</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for acf in bloggy %}
+						<tr>
+							<td class="text-center" data-indexify="0"></td>
+							<td>
+								<div class="table-actions cell-container">
+									<div class="cell">
+										<a data-undoable="{{ path('_deleteBloggy', {'id': acf.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+											<i class="fa fa-trash"></i>
+										</a>
+									</div>
+									{% if acf.enabled == false %}
+										{% set title = 'Activer' %}
+										{% set cls = 'warning' %}
+										{% set action = 'on' %}
+									{% else %}
+										{% set title = 'Désactiver' %}
+										{% set cls = 'success' %}
+										{% set action = 'off' %}
+									{% endif %}
+									<div class="cell">
+										<a data-load-href="{{ path('_onOffBloggy', {'action':action, 'id': acf.id}) }}" title="{{ title }}" class="btn btn-xs btn-{{ cls }}">
+											<i class="fa fa-recycle"></i>
+											<span hidden="hidden">{{ title }}</span>
+										</a>
+									</div>
+									<div class="cell">
+										<a data-href="{{ path('_updateBloggy', {'type': 'acf', 'id': acf.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</div>
+									<div class="cell">
+										<a href="{{ getPostHref(fetchEager(acf, true)) }}?swagg" target="_blank" title="Construire" class="btn btn-xs btn-primary">
+											<i class="fa fa-windows"></i>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>{{ acf.info.title }}</td>
+							<td>{{ acf.slug }}</td>
+							<td class="text-center">{{ acf.created|date("m/d/Y à H:i") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+			<div class="dp-table mg-auto">
+				{{ knp_pagination_render(bloggy_, getKnpTplPath()) }}
+			</div>
+
+		</div>
+	{% endif %}
+
+	<a id="btn_add_acf" title="Ajouter ACF" class="hidden _mdl-btn _mdl-btn-add btn-xs btn-primary" data-active="acf/create" data-href="{{ path('_createBloggy', {'type': 'acf'}) }}"><i class="fa fa-plus"></i><span>Ajouter</span></a>
+
+{% else %}
+
+	<style>
+		#field_pattern .button-delete {display:none;}
+		.field-row {
+			position: relative;
+		}
+		.field-row .index {
+			position: absolute;
+		    left: 0;
+		    background-color: #2baea8;
+		    width: 20px;
+		    height: 20px;
+		    border-radius: 100%;
+		    text-align: center;
+		    color: #fff;
+		    line-height: 20px;
+		    top: 15px;
+		    cursor: move
+		}
+		.field-row .row {
+			padding-left: 40px;
+		}
+		.fields-shortcuts .fields-group-wrapper {
+			display: table;
+			width: 100%;
+			text-align: center;
+			color: #eee;
+			margin-top: 15px;
+		}
+		.fields-shortcuts .fields-group-wrapper a { 
+			display: table-cell!important; 
+			font-size: 12px;
+			width: calc(100%/14);
+		}
+		.fields-shortcuts a { 
+			display: block!important;
+			cursor: pointer
+		}
+		.fields-shortcuts a:hover, .fields-shortcuts a:active { 
+			color: #000!important
+		}
+		.btn-expand {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: -19px -4px
+		}
+		body.fieldShortcut--fullscreen .main--header { display: none}
+		body.fieldShortcut--fullscreen .tile-fields-shortcut { 
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			height: calc(100% - 50px);
+			z-index: 2;
+		}
+		body.fieldShortcut--fullscreen .tile-fields-shortcut textarea { 
+			height: calc(100vh - 300px);
+		}
+		body.fieldShortcut--fullscreen .main-footer { 
+			width: 100%;
+		}
+		body.fieldShortcut--fullscreen .btn-expand {
+			margin: -18px 15px;
+		}
+		html body label.inheritance {
+			margin: 15px 0!important; float: left; width: 95px!important;
+		}
+	</style>
+
+	{{ form_start(form) }}
+		{% set value = form.vars.value %}
+		{% set info = value.info %}
+		<div class="row unselectable">
+
+			<div class="col-md-12">
+				<div class="tile tile-full">
+					<h3 class="tile-title">Désignation</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="field">
+								<input required type="text" name="info[title]" value="{{ info.title ?? '' }}">
+								<label>Nom du champ (pluriel)</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="field">
+								<input required type="text" name="info[title_singular]" value="{{ info.title_singular ?? '' }}">
+								<label>Nom du champ (Singulier)</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="field">
+								<input type="text" name="info[icone]" value="{{ info.icone ?? '' }}">
+								<label>Icône</label>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="field">
+								<input type="text" name="_info[slug]" value="{{ value.slug }}">
+								<label>Attribut <em>name</em></label>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<h4>Héritage</h4>
+							<label class="radio inheritance">
+								<input value="none" type="radio" name="info[inheritance]" {{ info.inheritance is defined ? (info.inheritance == 'none' ? 'checked' : '') : 'checked' }}>
+								<b>Aucun</b>
+							</label>
+							<label class="radio inheritance">
+								<input value="article" type="radio" name="info[inheritance]" {{info.inheritance is defined and info.inheritance == 'article' ? 'checked' : ''}}>
+								<b>Article</b>
+							</label>
+							<label class="radio inheritance">
+								<input value="page" type="radio" name="info[inheritance]" {{info.inheritance is defined and info.inheritance == 'page' ? 'checked' : ''}}>
+								<b>Page</b>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="tile tile-full tile-fields-shortcut">
+					<div class="row">
+						<div class="col-md-12">
+							<button data-js="acf={click:fullScreen}" class="btn-expand btn btn-sm" type="button"><i class="fa fa-expand" title="Plein écran"></i></button>
+							<div class="field">
+								<textarea data-id="fields_list" name="info[fields]" rows="8">{{ info.fields ?? '' }}</textarea>
+								<label>Champs</label>
+							</div>
+							<div id="fields_shortcuts" class="fields-shortcuts">
+								<div class="fields-group text-center"><a data-type="fields_group">Groupe de champs</a></div>
+								<div class="fields-group-wrapper">
+									<a data-type="text">Texte</a> |
+									<a data-type="textarea">Zone de texte</a> |
+									<a data-type="text_rich">Texte Riche</a> |
+									<a data-type="email">Email</a> |
+									<a data-type="number">Nombre</a> |
+									<a data-type="date">Date</a> |
+									<a data-type="file">Fichier</a> |
+									<a data-type="icon">Icône</a> |
+									<a data-type="page">Page</a> |
+									<a data-type="post">Post</a> |
+									<a data-type="country">Pays</a> |
+									<a data-type="range">Range</a> |
+									<a data-type="acf">ACF</a>
+									<a data-type="user">User</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+		</div>
+	{{ form_end(form) }}
+
+{% endif %}
+
+<script>
+	$(function(){
+		"use strict";
+
+		var inti__tO = 0,
+			ACF = {
+				init: function(){
+					this.bindFieldsShortcuts();
+				},
+				bindFieldsShortcuts: function(){
+					$('#fields_shortcuts').find('a').attr('data-js', 'acf={click:fieldShortcut}');
+					this.dataJs();
+				},
+				dataJs: function(){
+					__.rebindDataJs();
+					var shortcuts = {
+						'fields_group': `type="fields_group" label="Propriétés" name="props"`,
+						'text'		: `	type="text" label="" name="" col="12"`,
+						'textarea'	: `	type="textarea" label="" name="" col="12"`,
+						'text_rich'	: `	type="text-rich" label="" name="" col="12"`,
+						'email'		: `	type="email" label="" name="" col="12"`,
+						'number'	: `	type="number" label="" name="" col="12"`,
+						'date'		: `	type="date" label="" name="" col="12"`,
+						'file'		: `	type="file" label="" name="" col="12"`,
+						'icon'		: `	type="icon" label="" name="" col="12"`,
+						'page'		: `	type="page" label="" name="" col="12"`,
+						'post'		: `	type="post" label="" name="" posttype="" col="12"`,
+						'country'	: `	type="country" label="Pays" name="" col="12"`,
+						'range'		: `	type="range" label="" name="" col="12"`,
+						'acf'		: `	type="acf" acf="" controltype="" acfname="" col="12"`,
+						'user'		: `	type="user" label="" name="" col="12"`,
+					},
+					$fields_list = $('[data-id="fields_list"]');
+					__.dataJs({
+						acf: {
+							fieldShortcut: function ($trigger) {
+								var type = $trigger.attr('data-type'),
+									wishContent = shortcuts[type],
+									currentContent = $fields_list.val();
+									$fields_list.val(
+										currentContent + (type == 'fields_group' && currentContent !== '' ? "\n" + "\n" : "\n") + wishContent
+									);
+							},
+							fullScreen: function(){
+								$('body').toggleClass('fieldShortcut--fullscreen');
+							}
+						}
+					});
+				}
+			};
+			clearTimeout(inti__tO);
+			inti__tO = setTimeout(function(){
+				ACF.init();
+			}, 1000)
+	});
+</script>

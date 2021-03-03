@@ -1,0 +1,55 @@
+{% set items = getStorage('ACFJoinIssueRows', true) %}
+{% if items %}
+    {% set ACFJoinIssueRows = convertToKnpPaginatorBundle(items) %}
+    <div class="table-responsive">
+        <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+            <thead>
+                <tr>
+                    <th data-minmax="20" class="text-center">N°</th>
+                    <th data-minmax="100" class="text-center">Actions</th>
+                    <th data-minmax="250">Titre</th>
+                    <th>Clé(s) problématique(s)</th>
+                    <th data-minmax="130">Création</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in ACFJoinIssueRows %}
+                    <tr>
+                        <td class="text-center" data-indexify="0"></td>
+                        <td>
+                            <div class="table-actions cell-container">
+                                <div class="cell">
+                                    <a data-undoable="{{ path('_deleteBloggy', {'id': row.item.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                                <div class="cell">
+                                    <a data-href="{{ path('_updateACFBloggy', {'type': row.item.type, 'id': row.item.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ row.item.info.title }}</td>
+                        <td>{% for k in row.keysToInject %} <span class="issue-key">[ {{k}} ]</span> {% endfor %}</td>
+                        <td class="text-center">{{ row.item.created|date("m/d/Y à H:i") }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        <div class="dp-table mg-auto">
+            {{ knp_pagination_render(ACFJoinIssueRows, getKnpTplPath()) }}
+        </div>
+    </div>
+    <style>
+        .issue-key { color: #ff1510; }
+        td .issue-key:not(:first-child) { margin-left: 10px; }
+    </style>
+{% else %}
+    <div class="alert alert-success">
+        <span class="cell" style="width:34px;text-align:center;font-size:35px;padding-right:15px;"><i class="fa fa-check-circle"></i></span>
+        <p class="cell" style="line-height:18px">Tous les enregistrements sont liés correctement les uns aux autres.</p>
+    </div>
+{% endif %}

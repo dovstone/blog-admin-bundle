@@ -1,0 +1,207 @@
+<div class="row">
+
+	{% if isREADING is defined %}
+	
+		{% include '@DovStoneBlogAdminBundle/partials/search.html.twig' with {'pathName':'_searchIn', 'type': type} %}
+
+    	{# {{ filterForm }}
+    	<p class="text-center">{{ getResultsFoundText(total) }}</p><br> #}
+
+	    {% if bloggy_ is empty %}
+	        <div>{{ getEmptyListView() }}</div>
+	    {% else %}
+
+	    	<div class="table-responsive">
+
+				<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+					<thead>
+						<tr>
+							<th data-minmax="20" class="text-center">N°</th>
+		                    <th data-minmax="155" class="text-center">Actions</th>
+		                    <th data-minmax="100">Titre</th>
+		                    <th>Lien</td>
+		                    <th data-minmax="100">Parent</th>
+		                    <th data-minmax="70" class="text-center">En ligne ?</th>
+		                    <th data-minmax="130" class="text-center">Création</th>
+						</tr>
+					</thead>
+					<tbody>
+		                {% for article in bloggy %}
+		                	{% set info = article.info %}
+	                        {% set href = getPostHref(article) %}
+		                    <tr>
+		                        <td class="text-center" data-indexify="0"></td>
+		                        <td>
+		                            <div class="table-actions cell-container">
+		                                <div class="cell">
+		                                    <a data-undoable="{{ path('_deleteBloggy', {'id': article.id}) }}" data-undoable-parent="tr" title="Supprimer" class="btn btn-xs btn-danger">
+		                                        <i class="fa fa-trash"></i>
+		                                    </a>
+		                                </div>
+		                                {% if article.enabled == false %}
+			                            	{% set title = 'Publier' %}
+			                            	{% set cls = 'success' %}
+			                            	{% set action = 'on' %}
+			                        	{% else %}
+			                            	{% set title = 'Mettre en relecture' %}
+			                            	{% set cls = 'warning' %}
+			                            	{% set action = 'off' %}
+			                        	{% endif %}
+			                            <div class="cell">
+			                                <a data-load-href="{{ path('_onOffBloggy', {'action':action, 'id': article.id}) }}" title="{{ title }}" class="btn btn-xs btn-{{ cls }}">
+			                                    <i class="fa fa-recycle"></i>
+			                                    <span hidden="hidden">{{ title }}</span>
+			                                </a>
+			                            </div>
+		                                <div class="cell">
+		                                    <a data-href="{{ path('_updateBloggy', {'type': 'article', 'id': article.id}) }}" title="Modifier" class="btn btn-xs btn-info">
+		                                        <i class="fa fa-pencil"></i>
+		                                    </a>
+		                                </div>
+		                                <div class="cell">
+		                                    <a target="_blank" href="{{ href }}?swagg" title="Construire" class="btn btn-xs btn-primary">
+		                                        <i class="fa fa-windows"></i>
+		                                    </a>
+		                                </div>
+		                            </div>
+		                        </td>
+		                        <td>{{ info.title }}</td>
+		                        <td title="{{ href }}">
+		                            <a target="_blank" href="{{ href }}">{{ href }}</a>
+		                        </td>
+		                        {% set parent = article.parent == null ? 'A U C U N' : article.parent.info.title %}
+		                        <td title="{{ parent }}">
+		                            {% if article.parent == null %}
+		                                <em class="text-smoked">{{ parent }}</em>
+		                            {% else %}
+		                                {{ parent }}
+		                            {% endif %}
+		                        </td>
+		                        <td class="text-center">
+		                            {% if article.enabled == true %}
+		                                <span class="on-off on">En ligne</span>
+		                            {% else %}
+		                                <span class="on-off off">Hors-ligne</span>
+		                            {% endif %}
+		                        </td>
+		                        <td class="text-center">{{ article.created|date("d/m/Y à H:i") }}</td>
+		                    </tr>
+		                {% endfor %}
+					</tbody>
+
+				</table>
+
+		        <div class="dp-table mg-auto">
+		            {{ knp_pagination_render(bloggy_, getKnpTplPath()) }}
+		        </div>
+
+	    	</div>
+
+    	{% endif %}
+
+	{% else %}
+
+		<script src="{{ getCDN('swagg/plugins/acf/acf.js') }}"></script>
+		<style>
+			body .widget-image-preview-area{
+				height: 127px
+			}
+		</style>
+
+	    {{ form_start(form) }}
+	    	{% set info = form.vars.value.info %}
+			<div class="col-md-12">
+
+				<div class="tile tile-full">
+					<h3 class="tile-title">Infos &amp; Réferencement</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-8">
+
+							{#  #}
+							<div class="field">
+								<select class="select2-basic" name="info[parent]" data-select-option="{{ info.parent ?? '' }}">
+									{{ options.pages }}
+								</select>
+								<label>Page parent</label>
+							</div>
+
+							{#  #}
+							<div class="field">
+								<input required type="text" name="info[title]" value="{{ info.title ?? '' }}">
+								<label>Titre <em>(Sera affiché dans le navigateur)</em></label>
+							</div>
+							<div class="field half">
+								<input type="text" name="_info[slug]" value="{{ form.vars.value.slug ?? '' }}">
+								<label>Slug</label>
+							</div>
+
+							{#  #}
+							<div class="field half half-right">
+								<input type="text" name="info[keywords]" value="{{ info.keywords ?? '' }}">
+								<label>Mots-clés</label>
+							</div>
+
+							{#  #}
+							<div class="field">
+								<textarea style="resize:none" rows="4" name="info[description]" value="{{ info.description ?? '' }}"></textarea>
+								<label>Brève description</label>
+							</div>
+						</div>
+						<div class="col-md-4">
+
+							{#  #}
+							<label class="switch">
+								<input type="checkbox" name="_info[enabled]" {{form.vars.value.enabled is defined and form.vars.value.enabled == true ? 'checked' : ''}}>
+								<b>Publier</b>
+							</label>
+
+							{#  #}
+							<label class="switch hidden">
+								<input type="checkbox" name="info[auth]" {{info.auth is defined and info.auth == true ? 'checked' : ''}}>
+								<b>Authentique</b>
+							</label>
+							<label class="switch">
+								<input type="checkbox" name="info[comments]" {{info.comments is defined and info.comments == true ? 'checked' : ''}}>
+								<b>Activer Commentaires</b>
+							</label>
+
+							{#  #}
+							<div class="field">
+								<input data-onpageloaded="click" data-js="ACF={click:imageControl__previewPicked}" type="hidden" name="info[thumb]" value="{{ info.thumb ?? '' }}" />
+								<label>Image d'avant-plan</label>
+								<div data-js="ACF={click:imageControl__getLibrary}" class="widget-preview-area is-empty">
+									<a data-js="ACF={click:imageControl__removeImage}" title="Retirer"><i class="fa fa-trash"></i></a>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="tile tile-full">
+					<h3 class="tile-title">Corps de l'article</h3>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+							{#  #}
+							{% if isEditMode is defined %}
+					            <a target="_blank" href="{{ getPostHref(fetchEager(form.vars.value, true)) }}?swagg">Editer le corps de l'a 'article <strong><em>"{{ info.title }}"</em></strong></a>
+				            {% else %}
+				                <a>Vous devez dabord <u><strong>Enregister l'article</strong></u> avant de pouvoir en rédiger le corps.</a>
+				            {% endif %}
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+	        <div class="row">
+	            <div class="col-sm-12">{{ form_widget(form.submit) }}</div>
+	        </div>
+    	{{ form_end(form) }}
+
+	{% endif %}
+
+</div>

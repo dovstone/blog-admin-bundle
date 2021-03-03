@@ -1,0 +1,22 @@
+<div class="col-md-12">
+    <div class="tile tile-full">
+        <h3 class="tile-title">Sélectionnez un thème</h3>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                
+                {% for i, theme in themes %}
+                    {% if i == 0 %}<form action="{{ path('_saveTheme') }}" method="post">{% endif %}
+                        <label class="radio">
+                            <input type="radio" name="theme" value="{{ theme }}" {{ getStorage('__AppThemeSelected', true) == theme ? 'checked':'' }}>
+                            <b>{{ theme }}</b>
+                        </label>
+                    {% if i == themes|length-1 %}<button type="submit" class="hidden">Enregistrer</button></form>{% endif %}
+                {% else %}
+                    <p>Aucun theme trouvé</p>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>

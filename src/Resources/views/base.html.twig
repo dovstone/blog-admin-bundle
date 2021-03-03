@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html data-app-config='{{ getAppConfig() }}'>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% for title in app.flashes('title') %}{{ title|replace({'<em>':'', '</em>':''}) }}{% endfor %} | {{ getEnv('APP_NAME') }} | BACK-OFFICE{% endblock %}</title>
+        {% block stylesheets %}
+        <link rel="stylesheet" href="{{ getCDN('swagg/css/imports.css') }}">
+        <link rel="stylesheet" href="{{ getCDN('swagg/css/tabs.css') }}">
+        {% if getEnv() is same as("dev") %}
+            <link rel="stylesheet" href="http://localhost:{{ getEnv('ENCORE_PORT') }}/assets/css/_admin/style.css">
+        {% else %}
+            <link rel="stylesheet" href="{{ getUrl('assets/css/_admin/style.css') }}">
+        {% endif %}
+        <link rel="stylesheet" href="{{ getCDN('swagg/css/table.css') }}">
+        <link rel="canonical" href="{{ getCurrentUrl() }}" />
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ getUrl('favicon.ico') }}">
+        {% endblock %}
+        <script src="{{ getCDN('jquery/jquery-1.11.3.min.js') }}"></script>
+        <script src="{{ getCDN('underscore/js/underscore.js') }}"></script>
+        <script src="{{ getCDN('swagg/js/helpers.js') }}"></script>
+        <script src="{{ getCDN('swagg/js/admin.js') }}"></script>
+    </head>
+    <body>
+        <main id="blog_admin_bundle">
+            <header class="admin-main-header">{% include "@DovStoneBlogAdminBundle/partials/main-header.html.twig" %}</header>
+            <section class="admin-body">
+                <aside id="admin_left_container" class="has-transition">{% include "@DovStoneBlogAdminBundle/partials/left-navigation.html.twig" %}</aside>
+                <div id="admin_right_container">
+                    <div id="dropping_animation" class="has-transition dropping-animation undropped">
+                        <div id="doc_tabs" class="doc-tabs"></div>
+                        {% include "@DovStoneBlogAdminBundle/flashes/alert.html.twig" %}
+                        {% block body %}{% endblock %}
+                    </div>
+                </div>
+            </section>
+        </main>
+        {% block javascripts %}
+            <script>
+            $(function(){
+              __.requireJs([__.getAppConfig('cdn_host') + '/ScssToCss/js/sass.min.js'], function() {
+                var scss = ['style', 'filebrowser', 'private-page-builder'];
+                $.each(scss, function(i, scss) {
+                  $.get(__.getUrl('dev-assets/scss/_admin/' + scss + '.scss'), function(s) {
+                    new Sass(__.getAppConfig('cdn_host') + '/ScssToCss/js/sass.worker.js').compile(s, function(s) {
+                      var scssId = (scss + '_scss').replaceAll('/', '__');
+                      $('#' + scssId).remove();
+                      $("head").prepend($('<style id="' + scssId + '" />').text(s.text));
+                    })
+                  });
+                });
+              });
+            });</script>
+        {% endblock %}
+    </body>
+</html>

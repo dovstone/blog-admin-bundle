@@ -1,0 +1,182 @@
+{{ include('@DovStoneBlogAdminBundle/partials/acf-join-issue-rows.html.twig') }}
+
+<div class="row">
+
+	<div class="tile-col col-sm-6 col-md-3">
+		<div class="tile">
+			<h4 class="tile-title">Liens Rapides</h4>
+			<div class="tile-body">
+				<div class="cell-container">
+					<div class="cell cell-left"><div class="icon"><i class="fa fa-link"></i></div></div>
+					<div class="cell">
+						{% for p in [
+							['files-o', 'Page', 'page'],
+							['sitemap', 'Menu', 'menu'],
+							['lock', 'Rôle', 'role'],
+							['user-secret', 'Utilisateur', 'user']
+						] %}
+							{% set isUser = p[1] == 'Utilisateur' %}
+							{% set label = p[1] %}
+							{% set count = (isUser ? findUserBy() : findBloggy({'type':p[2]}))|length %}
+							<div class="col col-sm-12 col-md-12">
+								<a title="{{label}}s ({{count}})" data-href="{{ path( isUser ? '_listAdmins' : '_listBloggy', {'type': isUser ? 'users' : p[2]|lower }) }}">
+									<i class="_icon fa fa-{{p[0]}}"></i>
+									<span class="_label">{{label}}s</span>
+									<span class="_count">({{count}})</span>
+								</a>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="tile-col col-sm-6 col-md-3">
+		<div class="tile">
+			<h4 class="tile-title">Champs Personnalisés</h4>
+			<div class="tile-body">
+				<div class="cell-container">
+					<div class="cell cell-left"><div class="icon"><i class="fa fa-puzzle-piece"></i></div></div>
+					<div class="cell">
+						<div class="row">
+							{% if getStorage('___ACFCollection', true) %}
+								{% for acf in getStorage('___ACFCollection', true) %}
+									{% if acf.enabled == true %}
+										{% set label = acf.info.title %}
+										{% set count = findBloggy({'type':acf.slug}, {'created':'DESC'}, null)|length %}
+										<div class="col col-sm-12 col-md-12">
+											<a title="{{label}} ({{count}})" data-active="{{acf.slug}}/list" data-href="{{ path('_listACFBloggy', {'type':acf.slug}) }}">
+												<i class="_icon fa fa-{{ acf.info.icone ?? 'file-text-o' }}"></i>
+												<span class="_label">{{label}}</span>
+												<span class="_count">({{count}})</span>
+											</a>
+										</div>
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="tile-col col-sm-6 col-md-3">
+		<div class="tile">
+			<h4 class="tile-title">Compteur de visites</h4>
+			<div class="tile-body">
+				<div class="cell-container">
+					<div class="cell cell-left"><div class="icon"><i class="fa fa-sort-numeric-desc"></i></div></div>
+					<div class="cell">
+						{% for p in [
+							['En ligne',      'online'],
+							["Aujourd'hui",   'day'],
+							['Hier',          'yesterday'],
+							['Cette Semaine', 'week'],
+							['Ce Mois',       'month'],
+							['Cette Année',   'year'],
+							['Au Total',      'all'],
+						] %}
+							{% set label = p[0] %}
+							{% set count = getStorage(p[1], true) %}
+							<div class="col col-sm-12 col-md-12">
+								<a title="{{label}}s ({{count}})">
+									<i class="_icon fa fa-calendar"></i>
+									<span class="_label">{{label}}</span>
+									<span class="_count">({{count}})</span>
+								</a>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="tile-col col-sm-6 col-md-3">
+		<div class="tile">
+			<h4 class="tile-title">Mon compte</h4>
+			<div class="tile-body">
+				<div class="cell-container">
+					<div class="cell cell-left"><div class="icon"><i class="fa fa-user-secret"></i></div></div>
+					<div class="cell">
+						<div class="col col-sm-12 col-md-12">
+							{% for p in [
+								['user', 'Profil', path('_adminProfile')],
+								['pencil', "Modifier mes infos", path('_updateAdmin', {'id':app.user.id})],
+								['lock', 'Mot de passe', path('_editAdminPassword')],
+							] %}
+								{% set label = p[1] %}
+								<div class="col col-sm-12 col-md-12">
+									<a title="{{label}}" data-href="{{p[2]}}">
+										<i class="_icon fa fa-{{p[0]}}"></i>
+										<span class="_label">{{label}}</span>
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-6 col-md-4" hidden>
+		<div class="tile tile-half-height tile-icon-right">
+			<h4 class="tile-title">Gérer comptes</h4>
+			<div class="icon"><i class="fa fa-users"></i></div>
+		</div>
+		<div class="tile tile-half-height tile-half-width tile-icon">
+			<div class="icon"><i class="fa fa-cog"></i></div>
+		</div>
+		<div class="tile tile-half-height tile-half-width tile-icon">
+			<div class="icon"><a><i class="fa fa-trash"></i></a></div>
+		</div>
+	</div>
+
+	<div class="col-sm-6 col-md-4" hidden>
+		<div class="tile">
+			<h4 class="tile-title">Créer</h4>
+			<div class="title-body">
+				<div class="cell-container">
+					<div class="cell"><div class="icon"><i class="fa fa-plus"></i></div></div>
+					<div class="cell cell-50">
+						<a data-href="{{ path('_createBloggy', {'type': 'page'}) }}">Page</a>
+						<a data-href="{{ path('_createBloggy', {'type': 'article'}) }}">Article</a>
+						<a data-href="{{ path('_createBloggy', {'type': 'menu'}) }}">Menu</a>
+						<a data-href="{{ path('_createBloggy', {'type': 'menu'}) }}">Compte</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<style>
+.tile { height: 100%; }
+</style>
+
+<script>
+$(function(){
+	'use strict';
+	var colMaxH = 0,
+		containerMaxH = 0,
+		$cols = $('#pages_wrapper .tile-col');
+	$.map($cols, function(col, i){
+
+		var colH = $(col).height(),
+			containerH = $(col).find('.tile-body>.cell-container').height();
+
+		if( colH > colMaxH ){colMaxH = colH;}
+		if( containerH > containerMaxH ){containerMaxH = containerH;}
+
+		if( i == $cols.length-1 ){
+			$cols.height(colMaxH);
+			$cols.find('.tile-body>.cell-container').height(containerMaxH);
+		}
+	});
+})
+</script>
