@@ -1,0 +1,56 @@
+<div class="search-context-container">
+    <form action="{{ getUrl('_admin/pages/list') }}" method="GET" class="self-ajaxifyform">
+        <div class="cell-container cells-sm-broken">
+            <div class="cell cell-30">
+                <label class="cell-container" title="Titre du post">
+                    <span class="cell cell-label cell-use-space cell-first">Titre</span>
+                    <span class="cell">
+                        {{ getFormControl( 'text', 'title', getLatestQueriedValue('title'), 'class="form-control input-sm"' ) }}
+                    </span>
+                </label>
+            </div>
+            <div class="cell cell-1"></div>
+            <div class="cell cell-right">
+                <div class="cell-container">
+                    <div class="cell cell-20">
+                        <label class="cell-container" title="Type de post">
+                            <span class="cell cell-label cell-first">Type</span>
+                            <span class="cell">{{ getFormControlSelect( 'type', { 'page': 'Page', 'article': 'Article' }, 'class="form-control input-sm" data-js="docAction={change:setSearchFormAction}"', getLatestQueriedValue('type') ) }}</span>
+                        </label>
+                    </div>
+                    <div class="cell cell-20" title="Parent du post">
+                        <label class="cell-container">
+                            <span class="cell cell-label">Parent</span>
+                            <span class="cell">
+                                <select name="parent" class="form-control input-sm" _data-swagg-attrajax="{{ getUrl('_admin/serve/website-pages/options') }}" data-select-option="{{getLatestQueriedValue('parent')}}"></select>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="cell cell-20">
+                        <label class="cell-container" title="Visible dans un menu">
+                            <span class="cell cell-label">Menu</span>
+                            <span class="cell">{{ getFormControlSelect( 'in_nav', { '-1': 'Tous', '1': 'Oui', '0': 'Non' }, 'class="form-control input-sm"', -1 ) }}</span>
+                        </label>
+                    </div>
+                    <div class="cell cell-20">
+                        <label class="cell-container" title="Post publié">
+                            <span class="cell cell-label">En ligne</span>
+                            <span class="cell">{{ getFormControlSelect( 'trash', { '-1': 'Tous', '0': 'Oui', '1': 'Non' }, 'class="form-control input-sm"', -1 ) }}</span>
+                        </label>
+                    </div>
+                    <div class="cell cell-20">
+                        <label class="cell-container" title="Article authentique">
+                            <span class="cell cell-label">Auth.</span>
+                            <span class="cell">{{ getFormControlSelect( 'auth', { '-1': 'Tous', '1': 'Oui', '0': 'Non' }, 'class="form-control input-sm" disabled', -1 ) }}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="cell cell-1"></div>
+            <div class="cell">
+                <button class="btn btn-sm btn-primary"><i class="fa fa-search"></i> <span>Lancer</span></button>
+            </div>
+        </div>
+    </form>
+</div>
+<br>

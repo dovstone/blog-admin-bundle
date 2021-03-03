@@ -1,0 +1,37 @@
+<div class="tile tile-full">
+    <form action="{{ path(pathName, {'type':type}) }}" data-js="BackOffice={submit:handleForm}" method="get">
+        <div class="field">
+            <input data-js="acf={keyup|keypress|paste:submitSearchInForm}" type="text" required name="q" value="{{ app.request.get('q') }}">
+            <label>Entrez des mots-clés pour effectuer une recherche</label>
+        </div>
+        <div class="text-right">
+            <button data-js="acf={click:resetSearchInForm}" type="reset" class="btn btn-xs btn-success"><i class="fa fa-recycle"></i> Ré-initialiser</button>
+        </div>
+    </form>
+</div>
+<script>
+	$(function(){
+		'use strict';
+
+		__.dataJs({
+			acf: {
+				submitSearchInForm: function($t){
+					__.debounce('submitSearchInForm', 1000, function(){
+						var $form = $t.parents('form'),
+						href = $form.attr('action') +'?'+ $form.serialize();
+            			BackOffice.handleBrowserHistory(href);
+            			BackOffice.getPage(href);
+					});
+				},
+				resetSearchInForm: function($t){
+					__.debounce('resetSearchInForm', 1000, function(){
+						var $form = $t.parents('form'),
+						href = $form.attr('action');
+            			BackOffice.handleBrowserHistory(href);
+            			BackOffice.getPage(href);
+					});
+				}
+			}
+		});
+	});
+</script>

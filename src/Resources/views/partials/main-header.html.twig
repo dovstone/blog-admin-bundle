@@ -1,0 +1,48 @@
+<div class="cell-container">
+
+    <div class="cell cell-use-space">
+        <button data-js="toggable={click:aside}" id="main_header_mobile_trigger" class="btn btn-default"><i class="fa fa-bars"></i></button>
+    </div>
+
+    <div class="cell logo-container text-center"><img src="{{ getCDN('swagg/img/swagg.png') }}" alt=""></div>
+
+    <div class="cell history-container">
+        <div class="btn-group" role="group">
+            <a title="Revenir en arrière" class="btn btn-default" href="javascript:history.go(-1)">
+                <i class="fa fa-arrow-left"></i>
+            </a>
+            <a title="Actualiser" class="btn btn-default" href="{{ getCurrentUrl() }}">
+                <i class="fa fa-refresh"></i>
+                <span>Actualiser</span></a>
+            <a title="Avancer" class="btn btn-default">
+                <i class="fa fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="cell cell-use-space title-container">
+        <h1 class="text-ellipsis">{% for title in app.flashes('title_alias') %}{{ title|raw }}{% endfor %}</h1>
+    </div>
+
+    <div class="cell actions-container text-right">
+        <div class="btn-group" role="group">
+            {% if actions is defined %}
+                {% for a, b in actions %}
+                    {% if a == 'links' %}
+                        {% for c, d in b %}
+                            <a class="{% if d[1] == '/' %}no-ajaxify{% endif %} btn btn-{{ d[0] }}" href="{{ d[1] }}" {{ d[4] }}>
+                                <i class="fa fa-{{ d[2] }}"></i>
+                                <span>{{ d[3] }}</span></a>
+                        {% endfor %}
+                    {% else %}
+                        {% for c, d in b %}
+                            <button data-js="{{ d[1] }}" class="btn btn-{{ d[0] }}">
+                                <i class="fa fa-{{ d[2] }}"></i>
+                                <span>{{ d[3] }}</span></button>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>

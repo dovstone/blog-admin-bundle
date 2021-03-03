@@ -1,0 +1,50 @@
+<form class="dovstone_blog_admin_bundle_pagination" action="{{ getCurrentUrlParamsLess() }}" method="get" accept-charset="UTF-8">
+    <div class="pagination-input unselectable dp-table">
+        <div class="cell">
+            <a href="{{ path(route, query|merge({(pageParameterName): 1})) }}" title="Première page" class="btn btn-primary{% if current is same as(1) %} disabled {% endif %}">
+                <i class="fa fa-angle-double-left"></i>
+            </a>
+        </div>
+        <div class="cell">
+            <a href="{{ previous is defined ? path(route, query|merge({(pageParameterName): previous})) : '#' }}" title="Page précédente" class="btn btn-primary{% if current is same as(1) %} disabled {% endif %}">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        </div>
+        <div class="cell">
+            <span class="label-page">Page</span></div>
+        <div class="cell"><input onkeyup="$(this).parents('form').trigger('submit')" oninput="$(this).parents('form').trigger('submit')" type="number" class="form-control" min="1" max="{{ pageCount }}" name="page" value="{{ current }}"/></div>
+        <div class="cell">
+            <span class="out-of">/
+                {{ pageCount }}</span></div>
+        <div class="cell">
+            <a href="{{ next is defined ? path(route, query|merge({(pageParameterName): next})) : '#' }}" title="Page suivante" class="btn btn-primary{% if next is not defined %} disabled {% endif %}">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </div>
+        <div class="cell">
+            <a href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}" title="Dernière page" class="btn btn-primary{% if current is same as(pageCount) %} disabled {% endif %}">
+                <i class="fa fa-angle-double-right"></i>
+            </a>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        if (document.location.search !== "") {
+            var dovstone_blog_admin_bundle_pagination = $('.dovstone_blog_admin_bundle_pagination'),
+                params = document.location.search.replace('?', '').split('&');
+                dovstone_blog_admin_bundle_pagination.find('input.to-reset').remove();
+            _.each(params, function (param) {
+                var urlVars = param.split('=');
+                name = urlVars[0],
+                val = urlVars[1],
+                id = name + '_' + val;
+                if (name !== 'page') {
+                    dovstone_blog_admin_bundle_pagination.prepend(
+                        $('<input class="to-reset hidden" name="' + name + '" value="' + val + '"/>')
+                    );
+                }
+            });
+        }
+    });
+</script>

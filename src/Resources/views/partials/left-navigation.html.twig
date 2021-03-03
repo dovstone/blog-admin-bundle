@@ -1,0 +1,114 @@
+{#{% set items = {
+    'SITE WEB': [
+        ['/', 'eye', 'Aperçu du site web' ]
+    ],
+    'Tableau de bord': [
+        ['_dashboard', 'dashboard', 'Index']
+    ],
+    'Menus de navigation': [
+        ['_menus_new', 'plus', 'Créer un menu'],
+        ['_menus_new', 'sitemap', 'Tous les menus', 0],
+    ],
+    'Pages': [
+        ['_pages_new', 'file-text-o', 'Créer une page'],
+        ['_pages_list', 'files-o', 'Toutes les pages', 0]
+    ],
+    'Articles': [
+        ['_articles_new', 'pencil', 'Ecrire un article'],
+        ['_articles_list', 'newspaper-o', 'Tous les articles', 0]
+    ],
+    'Médias': [
+        ['#', 'picture-o', 'Bibliothèque', null, 'data-js="adminFilesBrowser={click:filesBrowser}"']
+    ],
+    'Paramètres': [
+        ['/admin/settings', 'cogs', 'Paramètres du site']
+    ],
+    'Cache': [
+        ['reset', '_admin/cache/reset', 'recycle', 'Vider le cache']
+    ]
+
+
+} %}#}
+{% set items = {
+    'SITE WEB': [
+        [null, '', 'eye', 'Aperçu du site web' ],
+        ['dashboard', '_admin/dashboard', 'dashboard', 'Tableau de bord'],
+    ],
+    'Menus de navigation': [
+        ['navs/new', '_admin/navs/new', 'plus', 'Créer un menu'],
+        ['navs/list', '_admin/navs/list', 'sitemap', 'Tous les menus', true]
+    ],
+    'Pages': [
+        ['pages/new', '_admin/pages/new', 'file-text-o', 'Créer une page'],
+        ['pages/list', '_admin/pages/list', 'files-o', 'Toutes les pages', true]
+    ],
+    'Articles': [
+        ['articles/new', '_admin/articles/new', 'pencil', 'Ecrire un article'],
+        ['articles/list', '_admin/articles/list', 'newspaper-o', 'Tous les articles', true]
+    ],
+    'Sections': [
+        ['sections', '_admin/sections/list', 'tasks', 'Toutes les sections', true]
+    ],
+    'Médias': [
+        [null, '#', 'picture-o', 'Bibliothèque', null, 'data-js="adminFilesBrowser={click:filesBrowser}"']
+    ],
+    'Opérateurs': [
+        ['admins/new', '_admin/admins/add', 'plus', 'Ajouter un compte'],
+        ['admins/list', '_admin/admins/list', 'users', 'Tous les opérateurs', true]
+    ],
+    'Paramètres': [
+        ['settings/env', '_admin/settings/env', 'cogs', "Variables d'Environnement"],
+    ],
+    'Entête et Pied de page': [
+        [null, '#headerrr', 'window-maximize', "Entête de page", null, 'data-js="adminGoTo={click:genericAreas}"'],
+        [null, '#footerrr', 'window-maximize rotate-180', 'Pied de page', null, 'data-js="adminGoTo={click:genericAreas}"'],
+        [null, '#asideee', 'window-maximize rotate-90', 'Barre Latérale', null, 'data-js="adminGoTo={click:genericAreas}"']
+    ],
+    'Cache': [
+        ['cache/reset', '_admin/cache/reset', 'recycle', 'Vider les collections']
+    ]
+} %}
+
+<div id="admin_left_navigation">
+    <nav>
+        <ul class="main">
+            <li class="admin text-center">
+                <p class="text-uppercase badge" style="white-space:normal;margin:0 15px">{{ getEnv('APP_NAME') }}</p>
+                <p class="admin-figure_"><img class="rounded mx-auto d-block" src="{{ getCDN('swagg/img/default-90x90.png') }}"></p>
+                <p class="admin-pseudo">
+                    <a href="{{ path('_admins_settings') }}" title="Votre profil">{{ app.user.email }}</a>
+                </p>
+                <p class="admin-logout">
+                    <a href="{{ path('_admins_logout') }}" class="text-danger">
+                        <i class="fa fa-power-off"></i>
+                        <span>Se déconnecter</span></a>
+                </p>
+            </li>
+            {% for label, items in items %}
+                <li>
+                    <span>{{ label }}</span>
+                    <div class="items-list-container">
+                        <ul class="no-padding">
+                            {% for item in items %}
+                                <li 
+                                {% if item[0] is not null %}data-active="{{ item[0] }}"{% endif %}
+                                {% if (item[1]) is same as(app.request.requesturi) %} class="enlight" {% endif %}>
+                                    <a {% if item[1] == '' %} class="no-ajaxify" target="_blank" {% endif %} href="{{ getUrl(item[1]) }}" {% if item[5] is defined %} {{ item[5]|raw }} {% endif %}>
+                                        <i class="fa fa-{{ item[2] }}"></i>
+                                        <span>{{ item[3] }}</span>
+                                        {% if item[4] is defined and item[4] is same as(true) %}
+                                            {% set count_name = item[1] | replace({'/': '_'}) %}
+                                            <span class="badge bg-success">
+                                                {{ app.session.get(count_name) }}
+                                            </span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>

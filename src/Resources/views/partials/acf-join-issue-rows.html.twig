@@ -1,1 +1,10 @@
-
+{% set ACFJoinIssueRows = getStorage('ACFJoinIssueRows', true) %}
+{% if ACFJoinIssueRows is not empty %}
+    <div class="alert alert-danger">
+        <span class="cell" style="width:34px;text-align:center;font-size:35px;padding-right:15px;"><i class="fa fa-exclamation-circle"></i></span>
+        <p class="cell" style="line-height:18px">
+            Un ou plusieurs enregistrements présentent des erreurs. Ils ne seront pas affichés sur le site web.<br>
+            <a data-href="{{ path('_listBloggy', {'type':'issue'}) }}"><u>Cliquez ici</u></a> pour voir la liste et les réparer.
+        </p>
+    </div>
+{% endif %}
