@@ -1,1 +1,22 @@
-
+<nav class="nav-aside border-left" data-nav-active="true">
+    <ul>
+        <li class="category">
+            <h3 class="normal-ws text-capitalize hidden" style="margin:0 auto 30px 15px">Profil &amp; Paramètres</h3>
+            <ul>
+                <li>
+                    <a data-active="admin/profile" data-href="{{ path('_adminProfile') }}">Profil</a>
+                </li>
+                <li>
+                    <a data-active="edit/info" data-href="{{ path('_updateAdmin', {'id': app.user.id}) }}">Modifier mes infos</a>
+                </li>
+                <li>
+                    <a data-active="edit/password" data-href="{{ path('_editAdminPassword') }}">Mot de passe</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{{ path('_logoutAdmin') }}" style="color:#e43135">Se déconnecter</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

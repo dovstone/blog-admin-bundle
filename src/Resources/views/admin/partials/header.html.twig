@@ -1,0 +1,30 @@
+<style>
+    .header--title-container{display: none}
+    .profile-container{margin-top:20px}
+</style>
+
+<div class="user-header _vam">
+    <div class="hidden">
+        <h1>{{ getUserFullName(user) }}</h1>
+        <p>{{ 'En fonction depuis ' ~  getHumanDiff(user.created) }}</p>
+    </div>
+    <div class="cell-container cells-xs-broken xs-center">
+        <div class="cell cell-50 text-right xs-center">
+            <div class="user-avatar">
+                <img class="img-thumb" width="164" height="164" src="{{ getCDN('swagg/assets/img/default-90x90.png') }}" alt="{{ getUserFullName(user) }}" style="border-radius:100%">
+            </div>
+        </div>
+        <div class="cell cell-spacer-20"></div>
+        <div class="cell text-left xs-center">
+            <div class="user-links">
+                <ul class="xs-dp-table mg-auto">
+                    <li title="Nom et prénoms : {{ getUserFullName(user) }}"><i class="fa fa-user"></i> {{ getUserFullName(user) }}</li>
+                    <li title="Téléphone : {{user.contact}}"><i class="fa fa-phone"></i> {{ user.contact }}</li>
+                    <li title="Adresse Electronique : {{user.email}}"><i class="fa fa-at"></i> {{ user.email }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
